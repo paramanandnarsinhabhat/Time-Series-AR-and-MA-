@@ -98,6 +98,57 @@ plt.show()
 
 '''
 
+# AR model
+from statsmodels.tsa.arima_model import ARIMA
+# fit AR model
+model = ARIMA(train_data['count_log'], order=(2,1,0))
+model_fit = model.fit()
+
+output = model_fit.forecast(184)
+valid_data['AR'] = (pd.DataFrame(output[0])).values
+
+valid_data['AR'] = np.exp(valid_data['AR'])
+
+plt.figure(figsize=(12,8))
+
+plt.plot(train_data.index, train_data['count'], label='train_data')
+plt.plot(valid_data.index, valid_data['count'], label='valid')
+plt.plot(valid_data.index, valid_data['AR'], label='predicted')
+
+plt.legend(loc='best')
+plt.title("AR model")
+plt.show()
+  
+# calculating RMSE 
+rmse = sqrt(mean_squared_error(valid_data['count'], valid_data['AR']))
+print('The RMSE value for AR is', rmse)
+
+#MA model
+# fit MA model
+model = ARIMA(train_data['count_log'], order=(0,1,2))
+model_fit = model.fit()
+
+output = model_fit.forecast(184)
+valid_data['MA'] = (pd.DataFrame(output[0])).values
+
+valid_data['MA'] = np.exp(valid_data['MA'])
+
+plt.figure(figsize=(12,8))
+
+plt.plot(train_data.index, train_data['count'], label='train_data')
+plt.plot(valid_data.index, valid_data['count'], label='valid')
+plt.plot(valid_data.index, valid_data['MA'], label='predicted')
+
+plt.legend(loc='best')
+plt.title("MA model")
+plt.show()
+
+# calculating RMSE 
+rmse = sqrt(mean_squared_error(valid_data['count'], valid_data['MA']))
+print('The RMSE value for MA is', rmse)
+
+
+
 
 
 
